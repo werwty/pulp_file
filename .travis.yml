@@ -16,6 +16,22 @@ install: source .travis/install.sh
 before_script: source .travis/before_script.sh
 script: source .travis/script.sh
 after_failure:
-  - sh -c "cat ~/django_runserver.log"
-  - sh -c "cat ~/resource_manager.log"
-  - sh -c "cat ~/reserved_workers-1.log"
+- sh -c "cat ~/django_runserver.log"
+- sh -c "cat ~/resource_manager.log"
+- sh -c "cat ~/reserved_workers-1.log"
+stages:
+- name: test
+- name: deploy
+  if: tag =~ ^3.0.0*
+jobs:
+  include:
+  - stage: deploy
+    script: skip
+    deploy:
+      provider: pypi
+      distributions: sdist bdist_wheel
+      user: pulp
+      password:
+        secure: BWi6+clUB09vF2xLE9YKTP4NUMmxHQjIETsENGz9bWjJIn15+pt3jgmetrGdvNCyhR1UbkdUAt/WL6nJKTngnMGPbZn/WcANZA5bFTXXfS4HvdcEWw6ycdiFNU8dpGmhRYEVGna5r0ytMTvm7EOGc02tFBGxLGRDQeb/Lm81o5JPkwZko2XhQChqLFGiDobHB4OhzeCOI/e43AUEKZzd4BABc9hRljXTk+TE835BParnglwgSZEyCwg6etCRJxgS6iM774FdQPPIr+pEZWGQL+GoUkOV4A1/O6UReNde1MwV1cB1Xuq5i/NmGBFP0FpPit+k6kn7DW4LGQD2Q/HzDmn1A3u4GuGJJyWdoPJGYwUylq1v73b/JqfaXcH20grDzeF9IYhnvV0TnSzo9FMa7ShhD2mFzIxweV71bLwop3sbcfrsRsJi1Tv0gZUtEAh3ICoFwZsyJYE1+jNMyJi5yLAeXb0mBy+40L+ohyv7gJfTqMF27wylI99E9rlJlt2+qfaXGwKGX19y2qB86IpQb/QRqE0n0Jf/9W60FMRfIfQuXdk7aN8gf5NeTzXaRhaxslUCvf3hD5Zj0ml2bKDcE3TwCfyblV1bNkArDTJjFtN/ybNezTt7vPys/4RzjmTjEvAd9cg7syHxFaVXdDrT/B4SE7F/8HNIlRgAjszwQ8U=
+      on:
+        tags: true
